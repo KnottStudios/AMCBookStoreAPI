@@ -31,9 +31,9 @@ namespace AMCBookStoreApi.Controllers
         /// This includes a query string for searching for specific results. 
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<CategoryVM>> Get([FromQuery] CategoryQuery query)
+        public ActionResult<IEnumerable<CategoryVM>> Get([FromQuery] QuerySearch query)
         {
-            return CategoryCollection.GetCategoryVMs(_accessor.HttpContext.Request.Host.Value)?.Take(query.MaxReturn)?.ToList();
+            return CategoryCollection.GetCategoryVMs(_accessor.HttpContext.Request.Host.Value, query)?.ToList();
         }
         /// <summary>
         /// GET api/Category/{id}

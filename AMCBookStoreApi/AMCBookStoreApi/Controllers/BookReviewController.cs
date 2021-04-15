@@ -31,9 +31,9 @@ namespace AMCBookStoreApi.Controllers
         /// This includes a query string for searching for specific results. 
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<BookReviewVM>> Get([FromQuery] BookReviewQuery query)
+        public ActionResult<IEnumerable<BookReviewVM>> Get([FromQuery] QuerySearch query)
         {
-            return BookReviewCollection.GetBookReviewVMs(_accessor.HttpContext.Request.Host.Value)?.Take(query.MaxReturn)?.ToList();
+            return BookReviewCollection.GetBookReviewVMs(_accessor.HttpContext.Request.Host.Value, query)?.ToList();
         }
         /// <summary>
         /// GET api/BookReview/{id}

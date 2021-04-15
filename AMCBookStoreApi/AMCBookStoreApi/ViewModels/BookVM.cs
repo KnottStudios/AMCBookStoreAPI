@@ -1,7 +1,4 @@
-﻿using AMCBookStoreApi.Models;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace AMCBookStoreApi.ViewModels
 {
@@ -18,17 +15,13 @@ namespace AMCBookStoreApi.ViewModels
         public BookVM(int id, string baseUrl)
         {
             Id = id;
-            SetDefaultLinks($"{baseUrl}", nameof(Book));
-            AddLink(new Dink
+            AddLink(new BSLink
             {
-                Id = 3,
-                Label = $"Add To Cart",
+                Rel = "Cart",
+                Title = $"Add To Cart",
                 Href = $"{baseUrl}/api/MyCart/{Id}",
                 Method = "Post"
             });
         }
-        public List<Dink> BookReviews { get; set; } = new List<Dink>();
-        public List<Dink> Categories { get; set; } = new List<Dink>();
-        public List<Dink> Authors { get; set; } = new List<Dink>();
     }
 }

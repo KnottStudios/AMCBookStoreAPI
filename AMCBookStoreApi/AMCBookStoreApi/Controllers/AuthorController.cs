@@ -31,9 +31,9 @@ namespace AMCAuthorStoreApi.Controllers
         /// This includes a query string for searching for specific results. 
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<AuthorVM>> Get([FromQuery] AuthorQuery query)
+        public ActionResult<IEnumerable<AuthorVM>> Get([FromQuery] QuerySearch query)
         {
-            return AuthorCollection.GetAuthorVMs(_accessor.HttpContext.Request.Host.Value)?.Take(query.MaxReturn)?.ToList();
+            return AuthorCollection.GetAuthorVMs(_accessor.HttpContext.Request.Host.Value, query)?.ToList();
         }
         /// <summary>
         /// GET api/Author/{id}

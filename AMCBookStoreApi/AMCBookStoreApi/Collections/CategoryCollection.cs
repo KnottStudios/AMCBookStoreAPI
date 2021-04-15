@@ -2,6 +2,7 @@
 using AMCBookStoreApi.Models;
 using AMCBookStoreApi.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AMCBookStoreApi.Collections
 {
@@ -22,11 +23,11 @@ namespace AMCBookStoreApi.Collections
                     Id = 2,
                     Name = "Audio Book",
                     BookIds = { 1,2,3,4 },
-                    AuthorIds = { 2 }
+                    AuthorIds = { 1,2 }
                 },
                 new Category(){ 
                     Id = 3,
-                    Name = "Science Fiction",
+                    Name = "Fantasy",
                     BookIds = { 5 },
                     AuthorIds = { 3 }
                 },
@@ -38,9 +39,9 @@ namespace AMCBookStoreApi.Collections
                 }
             };
         }
-        public static List<CategoryVM> GetCategoryVMs(string baseUrl, CategoryQuery query = null)
+        public static List<CategoryVM> GetCategoryVMs(string baseUrl, QuerySearch query = null)
         {
-            var returnCats = Categories;//.Where(x => x.FirstName == query.Author.FirstName);
+            var returnCats = QueryHelper.QueryList<Category>(query, "category");
             var categoryVMs = new List<CategoryVM>();
             foreach (var cat in returnCats)
             {
@@ -49,9 +50,24 @@ namespace AMCBookStoreApi.Collections
                     Name = cat.Name,
                     Id = cat.Id,
                 };
-                vm.Books.AddRange(LinkListHelper.GetBookLinks(baseUrl, cat.BookIds));
-                vm.Authors.AddRange(LinkListHelper.GetAuthorLinks(baseUrl, cat.AuthorIds));
-                vm.SetDefaultLinks(baseUrl, "category");
+                vm.SetDefaultLinks(baseUrl, "category", cat.Name);
+                vm.Embed = new Embed(authors: AuthorCollection.GetAuthorEmbed(baseUrl, cat.AuthorIds), books: BookCollection.GetBookEmbed(baseUrl, cat.BookIds));
+                categoryVMs.Add(vm);
+            }
+            return categoryVMs;
+        }
+        public static List<CategoryVM> GetCategoryEmbed(string baseUrl, List<int> categoryIds)
+        {
+            var returnCats = Categories.Where(x => categoryIds.Contains(x.Id));
+            var categoryVMs = new List<CategoryVM>();
+            foreach (var cat in returnCats)
+            {
+                var vm = new CategoryVM()
+                {
+                    Id = cat.Id,
+                    Name = cat.Name,
+                };
+                vm.SetDefaultLinks(baseUrl, "category", cat.Name);
                 categoryVMs.Add(vm);
             }
             return categoryVMs;

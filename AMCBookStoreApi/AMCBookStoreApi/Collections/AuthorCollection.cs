@@ -17,6 +17,7 @@ namespace AMCBookStoreApi.Collections
                     Id = 1,
                     FirstName = "Scott",
                     LastName = "Adams",
+                    HeadshotImageUrl = "https://www.gstatic.com/webp/gallery3/squares.png",
                     BookIds = new List<int>(){ 3,4 },
                     CategoryIds = new List<int>() { 2,4 }
                 },
@@ -24,6 +25,7 @@ namespace AMCBookStoreApi.Collections
                     Id = 2,
                     FirstName = "Jon",
                     LastName = "Gordon",
+                    HeadshotImageUrl = "https://www.gstatic.com/webp/gallery/4.sm.jpg",
                     BookIds = new List<int>(){ 1,2 },
                     CategoryIds = new List<int>() { 1,2 }
                 },
@@ -36,9 +38,9 @@ namespace AMCBookStoreApi.Collections
                 }
             };
         }
-        public static List<AuthorVM> GetAuthorVMs(string baseUrl, AuthorQuery query = null) 
+        public static List<AuthorVM> GetAuthorVMs(string baseUrl, QuerySearch query = null) 
         {
-            var returnAuthors = Authors; //.Where(x => x.FirstName == query.Author.FirstName);
+            var returnAuthors = QueryHelper.QueryList<Author>(query, "author");
             var authorVMs = new List<AuthorVM>();
             foreach (var aut in returnAuthors)
             {
@@ -49,9 +51,25 @@ namespace AMCBookStoreApi.Collections
                     Id = aut.Id,
                     HeadshotImageUrl = aut.HeadshotImageUrl
                 };
-                vm.Books.AddRange(LinkListHelper.GetBookLinks(baseUrl, aut.BookIds));
-                vm.Categories.AddRange(LinkListHelper.GetCategoryLinks(baseUrl, aut.CategoryIds));
-                vm.SetDefaultLinks(baseUrl, "author");
+                vm.SetDefaultLinks(baseUrl, "author", $"{aut.FirstName} {aut.LastName}");
+                vm.Embed = new Embed(books : BookCollection.GetBookEmbed(baseUrl, aut.BookIds), categories : CategoryCollection.GetCategoryEmbed(baseUrl, aut.CategoryIds));
+                authorVMs.Add(vm);
+            }
+            return authorVMs;
+        }
+        public static List<AuthorVM> GetAuthorEmbed(string baseUrl, List<int> authorIds)
+        {
+            var returnAuthors = Authors.Where(x => authorIds.Contains(x.Id));
+            var authorVMs = new List<AuthorVM>();
+            foreach (var aut in returnAuthors)
+            {
+                var vm = new AuthorVM()
+                {
+                    Id = aut.Id,
+                    FirstName = aut.FirstName,
+                    LastName = aut.LastName,
+                };
+                vm.SetDefaultLinks(baseUrl, "author", $"{aut.FirstName} {aut.LastName}");
                 authorVMs.Add(vm);
             }
             return authorVMs;

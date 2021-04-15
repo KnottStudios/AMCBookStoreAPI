@@ -31,11 +31,13 @@ namespace AMCBookStoreApi.Controllers
         /// <summary>
         /// GET: api/Book
         /// This includes a query string for searching for specific results. 
+        /// 
+        /// USE THIS TO FETCH THE FIRST 10 BOOKS BY SCOTT ADAMS IN THE AUDIO BOOK CATEGORY.    
         /// </summary>
         [HttpGet]
-        public ActionResult<IEnumerable<BookVM>> Get([FromQuery] BookQuery query)
+        public ActionResult<IEnumerable<BookVM>> Get([FromQuery] QuerySearch query)
         {
-            return BookCollection.GetBookVMs(_accessor.HttpContext.Request.Host.Value)?.Take(query.MaxReturn)?.ToList();
+            return BookCollection.GetBookVMs(_accessor.HttpContext.Request.Host.Value, query)?.ToList();
         }
         /// <summary>
         /// GET api/Book/{id}
